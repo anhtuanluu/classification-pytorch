@@ -13,6 +13,7 @@ from torchsummary import summary
 import time
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+check_wrong = True # show wrong images, set false to turn off
 
 # config
 args = opt()
@@ -60,19 +61,37 @@ best_acc = checkpoint['acc']
 start_epoch = checkpoint['epoch']
 net.eval()
 
-# load image
-for image, target in testloader:
-    image = image.to(device)
-    start_time = time.time()
-    # predict
-    output = net(image)
-    _, predicted = output.max(1)
-    index = predicted[0]
-    # get label
-    label = class_names[index]
-    end_time = time.time()
-    image = image.squeeze(dim = 0)
-    print("Predict: {}. Time infer: {:.4f}".format(label, end_time-start_time))
-    imshow(image, delay=2)
-    # break
+if not check_wrong:
+    # load image
+    for image, target in testloader:
+        image = image.to(device)
+        start_time = time.time()
+        # predict
+        output = net(image)
+        _, predicted = output.max(1)
+        index = predicted[0]
+        # get label
+        label = class_names[index]
+        end_time = time.time()
+        image = image.squeeze(dim = 0)
+        print("Predict: {}. Time infer: {:.4f}".format(label, end_time-start_time))
+        imshow(image, delay=5)
+        # break
+else:
+    for image, target in testloader:
+        image, target = image.to(device), target.to(device).tolist()
+        start_time = time.time()
+        # predict
+        output = net(image)
+        _, predicted = output.max(1)
+        index = predicted[0]
+        # get label
+        label = class_names[index]
+        label_ = class_names[target[0]]
+        end_time = time.time()
+        image = image.squeeze(dim = 0)
+        if index != target[0]:
+            print("Predict: {}. Label: {}. Time infer: {:.4f}".format(label, label_, end_time-start_time))
+            imshow(image, delay=5)
+        # break
             
