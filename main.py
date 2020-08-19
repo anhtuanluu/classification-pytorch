@@ -19,7 +19,6 @@ args = opt()
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
-
 print('Preparing data..')
 # data augment
 data_transforms = {
@@ -35,6 +34,7 @@ data_transforms = {
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
 }
+
 # prepare data
 data_dir = args.data_dir # must include train, test folder
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),

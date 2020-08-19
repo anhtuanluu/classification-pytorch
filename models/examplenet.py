@@ -6,15 +6,15 @@ class Net(nn.Module):
     def __init__(self, num_classes=10):
         super(Net, self).__init__()
         self.conv0 = nn.Conv2d(3, 32, 3)
-        self.bn0 = nn.BatchNorm2d
+        # self.bn0 = nn.BatchNorm2d
         self.pool0 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.relu0 = nn.ReLU(inplace=True)
         self.conv1 = nn.Conv2d(32, 64, 3)
-        self.bn1 = nn.BatchNorm2d
+        # self.bn1 = nn.BatchNorm2d
         self.pool1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.relu1 = nn.ReLU(inplace=True)
         self.conv2 = nn.Conv2d(64, 128, 3)
-        self.bn2 = nn.BatchNorm2d
+        # self.bn2 = nn.BatchNorm2d
         self.pool2 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.relu2 = nn.ReLU(inplace=True)
 
