@@ -6,3 +6,4 @@ onnx
 prettytable
 matplotlib
 opencv-python
+pillow
