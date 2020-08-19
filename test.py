@@ -63,37 +63,24 @@ best_acc = checkpoint['acc']
 start_epoch = checkpoint['epoch']
 net.eval()
 
-if not check_wrong:
-    print("Showing image...")
-    for image, target in testloader:
-        image = image.to(device)
-        start_time = time.time()
-        # predict
-        output = net(image)
-        _, predicted = output.max(1)
-        index = predicted[0]
-        # get label
-        label = class_names[index]
-        end_time = time.time()
-        image = image.squeeze(dim = 0)
+print("Showing image...")
+for image, target in testloader:
+    image, target = image.to(device), target.to(device).tolist()
+    start_time = time.time()
+    # predict
+    output = net(image)
+    _, predicted = output.max(1)
+    index = predicted[0]
+    # get label
+    label = class_names[index]
+    end_time = time.time()
+    image = image.squeeze(dim = 0)
+    if not args.check_wrong:
         print("Predict: {}. Time infer: {:.4f}".format(label, end_time-start_time))
         imshow(image, delay=5)
-        # break
-else:
-    print("Showing wrong predicted image...")
-    for image, target in testloader:
-        image, target = image.to(device), target.to(device).tolist()
-        start_time = time.time()
-        # predict
-        output = net(image)
-        _, predicted = output.max(1)
-        index = predicted[0]
-        # get label
-        label = class_names[index]
+    else:
         label_ = class_names[target[0]]
-        end_time = time.time()
-        image = image.squeeze(dim = 0)
         if index != target[0]:
             print("Predict: {}. Truth: {}. Time infer: {:.4f}".format(label, label_, end_time-start_time))
             imshow(image, delay=5)
-        # break
+    # break
