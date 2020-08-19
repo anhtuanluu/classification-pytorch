@@ -11,6 +11,7 @@ from utils import count_parameters, progress_bar, imshow
 from sklearn import metrics
 from torchsummary import summary
 import time
+import argparse
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 ''' Inference in a folder 'test'. Show data dir training to get class name '''
 

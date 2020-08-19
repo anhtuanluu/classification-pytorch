@@ -1,4 +1,3 @@
-import argparse
 from models.resnet import resnet18, resnet50
 from models.efficientnet import EfficientNetB0
 from models.examplenet import examplenet

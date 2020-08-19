@@ -12,6 +12,7 @@ import cv2 as cv
 import collections
 import onnxruntime as rt
 from onnxruntime.datasets import get_example
+import argparse
 # device = 'cuda' if torch.cuda.is_available() else 'cpu'
 device = 'cpu'
 '''convert checkpoint to onnx.'''
