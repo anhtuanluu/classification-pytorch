@@ -37,4 +37,5 @@ def model(args):
         net = resnet50(num_classes=args.num_classes)
     if args.model == 'efficientnet':
         net = EfficientNetB0(num_classes=args.num_classes)
+	# add new model here
     return net
