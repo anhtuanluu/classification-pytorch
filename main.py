@@ -174,8 +174,6 @@ def eval():
     assert os.path.isfile(args.checkpoint), 'Error: no checkpoint directory found!'
     checkpoint = torch.load(args.checkpoint)
     net.load_state_dict(checkpoint['net'])
-    best_acc = checkpoint['acc']
-    start_epoch = checkpoint['epoch']
     target_total = []
     predicted_total = []
     with torch.no_grad():
