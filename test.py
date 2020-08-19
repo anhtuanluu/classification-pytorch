@@ -13,7 +13,7 @@ from torchsummary import summary
 import time
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-check_wrong = True # show wrong images, set false to turn off
+check_wrong = False # show wrong images, set false to turn off
 
 # config
 args = opt()
@@ -40,7 +40,7 @@ train_dataset = datasets.ImageFolder(os.path.join(data_dir, 'train'),
 test_dataset = datasets.ImageFolder(os.path.join(test_dir, 'test'),
                                           data_transforms['test'])
 testloader = torch.utils.data.DataLoader(test_dataset, batch_size=1,
-                                             shuffle=True, num_workers=args.num_workers)
+                                             shuffle=False, num_workers=args.num_workers)
 class_names = train_dataset.classes
 print("Classes: {}".format(class_names))
 # model

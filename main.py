@@ -10,6 +10,7 @@ import os
 from utils import count_parameters, progress_bar
 from sklearn import metrics
 from torchsummary import summary
+from dataset.imbalanced import ImbalancedDatasetSampler
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -40,9 +41,16 @@ data_dir = args.data_dir # must include train, test folder
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'test']}
-dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=args.batch_size,
-                                             shuffle=True, num_workers=args.num_workers)
-              for x in ['train', 'test']}
+if not args.balance:
+    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=args.batch_size,
+                                                shuffle=True, num_workers=args.num_workers)
+                for x in ['train', 'test']}
+else:
+    print("Use imbalanced dataset sampler...")
+    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], sampler=ImbalancedDatasetSampler(image_datasets[x]),
+                                                batch_size=args.batch_size, num_workers=args.num_workers)
+                for x in ['train', 'test']}
+
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'test']}
 class_names = image_datasets['train'].classes
 trainloader = dataloaders['train']
