@@ -7,3 +7,4 @@ prettytable
 matplotlib
 opencv-python
 pillow
+onnxruntime
