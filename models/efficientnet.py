@@ -161,7 +161,6 @@ def EfficientNetB0():
     }
     return EfficientNet(cfg)
 
-
 def test():
     net = EfficientNetB0()
     x = torch.randn(2, 3, 32, 32)

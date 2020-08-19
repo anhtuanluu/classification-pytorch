@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
 from torch.optim import lr_scheduler
 from torchvision import datasets, transforms
-from config import opt
+from config import opt, model
 import os
 from utils import count_parameters, progress_bar
 from sklearn import metrics

@@ -1,6 +1,7 @@
 import argparse
 from models.resnet import resnet18, resnet50
 from models.efficientnet import EfficientNetB0
+from models.examplenet import examplenet
 import torch
 from torchsummary import summary
 import torch.backends.cudnn as cudnn
@@ -37,5 +38,7 @@ def model(args):
         net = resnet50(num_classes=args.num_classes)
     if args.model == 'efficientnet':
         net = EfficientNetB0(num_classes=args.num_classes)
-	# add new model here
+    if args.model == 'examplenet':
+        net = examplenet(num_classes=args.num_classes)
+    # add new model here
     return net
