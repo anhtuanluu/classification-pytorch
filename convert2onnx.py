@@ -19,7 +19,7 @@ device = 'cpu'
 # config
 parser = argparse.ArgumentParser(description='Convert2onnx')
 parser.add_argument('--image_test', default = 'test.jpg', type=str, help='image for testing onnx model')
-parser.add_argument('--model_onnx_path', default = 'classification.onnx', type=int, help='path to save onnx model')
+parser.add_argument('--model_onnx_path', default = 'classification.onnx', type=str, help='path to save onnx model')
 args = opt(parser)
 
 # example testing image
