@@ -7,7 +7,7 @@ from torch.optim import lr_scheduler
 from torchvision import datasets, transforms
 from config import opt, model
 import os
-from utils import count_parameters, progress_bar
+from utils import count_parameters, progress_bar, compute_class_weights
 from sklearn import metrics
 from torchsummary import summary
 from dataset.imbalanced import ImbalancedDatasetSampler
@@ -56,6 +56,10 @@ class_names = image_datasets['train'].classes
 trainloader = dataloaders['train']
 testloader = dataloaders['test']
 
+# compute class weights
+class_weights = compute_class_weights(image_datasets['train'].imgs, len(image_datasets['train'].classes))
+class_weights = torch.FloatTensor(class_weights).to(device)
+
 print("Found {} training images".format(len(image_datasets['train'])))
 print("Found {} evaluating images".format(len(image_datasets['test'])))
 print("Classes: {}".format(class_names))
@@ -80,7 +84,7 @@ if args.resume:
     best_acc = checkpoint['acc']
     start_epoch = checkpoint['epoch']
 
-criterion = nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss(weight=class_weights)
 optimizer = optim.SGD(net.parameters(), lr=args.lr,
                       momentum=0.9, weight_decay=5e-4)
 
