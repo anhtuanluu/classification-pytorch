@@ -20,8 +20,6 @@ def count_parameters(model):
     print(table)
     print(f"Total Trainable Params: {total_params}")
     return total_params
-    
-# count_parameters(net)
 
 def get_mean_and_std(dataset):
     '''Compute the mean and std value of dataset.'''

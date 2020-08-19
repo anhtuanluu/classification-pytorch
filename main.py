@@ -11,16 +11,16 @@ from utils import count_parameters, progress_bar, compute_class_weights
 from sklearn import metrics
 from torchsummary import summary
 from dataset.imbalanced import ImbalancedDatasetSampler
-
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # config
-args = opt()
+parser = argparse.ArgumentParser(description='Image classification')
+args = opt(parser)
 
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
-print('Preparing data..')
+print('Preparing data...')
 # data augment
 data_transforms = {
     'train': transforms.Compose([
@@ -77,9 +77,9 @@ if device == 'cuda':
 
 if args.resume:
     # load checkpoint.
-    print('Resuming from best checkpoint..')
-    assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
-    checkpoint = torch.load('./checkpoint/ckpt_best.pth')
+    print('Resuming from checkpoint {}'.format(args.checkpoint))
+    assert os.path.isfile(args.checkpoint), 'Error: no checkpoint directory found!'
+    checkpoint = torch.load(args.checkpoint)
     net.load_state_dict(checkpoint['net'])
     best_acc = checkpoint['acc']
     start_epoch = checkpoint['epoch']
@@ -149,7 +149,7 @@ def test(epoch):
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
     # Save checkpoint.
-    acc = 100. * correct/total
+    acc = 100.*correct/total
     if acc > best_acc:
         print('New accuracy {:.2f}, saving best checkpoint..'.format(acc))
         state = {
@@ -170,8 +170,8 @@ def eval():
     test_loss = 0
     correct = 0
     total = 0
-    assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
-    checkpoint = torch.load('./checkpoint/ckpt_best.pth')
+    assert os.path.isfile(args.checkpoint), 'Error: no checkpoint directory found!'
+    checkpoint = torch.load(args.checkpoint)
     net.load_state_dict(checkpoint['net'])
     best_acc = checkpoint['acc']
     start_epoch = checkpoint['epoch']
@@ -196,7 +196,6 @@ def eval():
     print("confusion matrix: \n{}".format(confusion_matrix))
     report = metrics.classification_report(target_total, predicted_total)
     print(report)
-
 
 # train and eval
 if __name__ == '__main__':

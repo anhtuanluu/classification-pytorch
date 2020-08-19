@@ -11,12 +11,13 @@ from utils import count_parameters, progress_bar, imshow
 from sklearn import metrics
 from torchsummary import summary
 import time
-
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-check_wrong = False # show wrong images, set false to turn off
+''' Inference in a folder 'test'. Show data dir training to get class name '''
 
 # config
-args = opt()
+parser = argparse.ArgumentParser(description='Testing')
+parser.add_argument('--check_wrong', action='store_true', help='show wrong images, set false to turn off')
+args = opt(parser)
 
 # test image in folder and show
 data_dir = args.data_dir # get class names
@@ -52,17 +53,17 @@ if device == 'cuda':
     net = torch.nn.DataParallel(net)
     cudnn.benchmark = True
 
-assert os.path.isfile(args.checkpoint_test), 'Error: no checkpoint found!'
+assert os.path.isfile(args.checkpoint), 'Error: no checkpoint found!'
 # load checkpoint.
-print('Resuming from checkpoint {}'.format(args.checkpoint_test))
-checkpoint = torch.load(args.checkpoint_test)
+print('Resuming from checkpoint {}'.format(args.checkpoint))
+checkpoint = torch.load(args.checkpoint)
 net.load_state_dict(checkpoint['net'])
 best_acc = checkpoint['acc']
 start_epoch = checkpoint['epoch']
 net.eval()
 
 if not check_wrong:
-    # load image
+    print("Showing image...")
     for image, target in testloader:
         image = image.to(device)
         start_time = time.time()
@@ -78,6 +79,7 @@ if not check_wrong:
         imshow(image, delay=5)
         # break
 else:
+    print("Showing wrong predicted image...")
     for image, target in testloader:
         image, target = image.to(device), target.to(device).tolist()
         start_time = time.time()
@@ -91,7 +93,6 @@ else:
         end_time = time.time()
         image = image.squeeze(dim = 0)
         if index != target[0]:
-            print("Predict: {}. Label: {}. Time infer: {:.4f}".format(label, label_, end_time-start_time))
+            print("Predict: {}. Truth: {}. Time infer: {:.4f}".format(label, label_, end_time-start_time))
             imshow(image, delay=5)
         # break
-            
