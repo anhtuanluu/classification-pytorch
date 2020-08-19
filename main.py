@@ -84,7 +84,11 @@ if args.resume:
     best_acc = checkpoint['acc']
     start_epoch = checkpoint['epoch']
 
-criterion = nn.CrossEntropyLoss(weight=class_weights)
+if not args.balance:
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
+else:
+    criterion = nn.CrossEntropyLoss()
+
 optimizer = optim.SGD(net.parameters(), lr=args.lr,
                       momentum=0.9, weight_decay=5e-4)
 
