@@ -100,7 +100,7 @@ def train(epoch):
                      % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
     
     # Save checkpoint.
-    if epoch % args.save_checkpoint == 0:
+    if epoch != 0 and epoch % args.save_checkpoint == 0:
         print('Saving checkpoint every {} epoch..'.format(args.save_checkpoint))
         state = {
             'net': net.state_dict(),
