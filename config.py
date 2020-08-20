@@ -22,7 +22,7 @@ def opt(parser):
                         help='checkpoint for resuming training, testing and converting to onnx')
     parser.add_argument('--data_dir', type=str, required=False, help='data dir must contain train, test folder')
     parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
-    parser.add_argument('--step_size', default=2, type=int, help='decay learning rate step size')
+    parser.add_argument('--step_size', default=10, type=int, help='decay learning rate step size')
     parser.add_argument('--gamma', default=0.1, type=int, help='factor learning rate decay')
     parser.add_argument('--eval', action='store_true', help='no training, only evaluating')
     parser.add_argument('--balance', action='store_true', 
