@@ -4,7 +4,7 @@ import mlconfig
 import torch
 from torch import nn
 
-from utils import load_state_dict_from_url
+from .utils import load_state_dict_from_url
 
 model_urls = {
     'efficientnet_b0': 'https://www.dropbox.com/s/9wigibun8n260qm/efficientnet-b0-4cfa50.pth?dl=1',
@@ -257,12 +257,3 @@ def efficientnet_b6(pretrained=False, progress=True, **kwargs):
 @mlconfig.register
 def efficientnet_b7(pretrained=False, progress=True, **kwargs):
     return _efficientnet('efficientnet_b7', pretrained, progress, **kwargs)
-
-def test():
-    net = efficientnet_b0()
-    x = torch.randn(2, 3, 32, 32)
-    y = net(x)
-    print(y.shape)
-
-if __name__ == '__main__':
-    test()
