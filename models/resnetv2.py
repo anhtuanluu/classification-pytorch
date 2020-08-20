@@ -1,4 +1,3 @@
-#%%
 import torch
 import torch.nn as nn
 
@@ -6,7 +5,6 @@ from functools import partial
 from dataclasses import dataclass
 from collections import OrderedDict
 
-#%%
 class Conv2dAuto(nn.Conv2d):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -14,12 +12,10 @@ class Conv2dAuto(nn.Conv2d):
         
 conv3x3 = partial(Conv2dAuto, kernel_size=3, bias=False)
 
-# %%
 # conv = conv3x3(in_channels=32, out_channels=64)
 # print(conv)
 # del conv
 
-# %%
 def activation_func(activation):
     return  nn.ModuleDict([
         ['relu', nn.ReLU(inplace=True)],
@@ -27,7 +23,7 @@ def activation_func(activation):
         ['selu', nn.SELU(inplace=True)],
         ['none', nn.Identity()]
     ])[activation]
-# %%
+
 class ResidualBlock(nn.Module):
     def __init__(self, in_channels, out_channels, activation='relu'):
         super().__init__()
@@ -48,16 +44,13 @@ class ResidualBlock(nn.Module):
     def should_apply_shortcut(self):
         return self.in_channels != self.out_channels
 
-# %%
 # ResidualBlock(32, 64)
 
-# %%
 # dummy = torch.ones((1, 1, 1, 1))
 
 # block = ResidualBlock(1, 64)
 # block(dummy)
 
-# %%
 # In ResNet each block has a expansion parameter in order to increase the out_channels. 
 # Also, the identity is defined as a Convolution followed by an Activation layer, this is referred as shortcut. 
 # Then, we can just extend ResidualBlock and defined the shortcut function.
@@ -83,18 +76,14 @@ class ResNetResidualBlock(ResidualBlock):
         return self.in_channels != self.expanded_channels
 
 
-# %%
 # ResNetResidualBlock(32, 64)
 
-# %%
 from collections import OrderedDict
 def conv_bn(in_channels, out_channels, conv, *args, **kwargs):
     return nn.Sequential(OrderedDict({'conv': conv(in_channels, out_channels, *args, **kwargs), 
                           'bn': nn.BatchNorm2d(out_channels) }))
-# %%
 # conv_bn(3, 3, nn.Conv2d, kernel_size=3)
 
-# %%
 class ResNetBasicBlock(ResNetResidualBlock):
     expansion = 1
     def __init__(self, in_channels, out_channels, *args, **kwargs):
@@ -105,14 +94,12 @@ class ResNetBasicBlock(ResNetResidualBlock):
             conv_bn(self.out_channels, self.expanded_channels, conv=self.conv, bias=False),
         )
 
-# %%
 # dummy = torch.ones((1, 32, 224, 224))
 
 # block = ResNetBasicBlock(32, 64)
 # block(dummy).shape
 # print(block)
 
-# %%
 class ResNetBottleNeckBlock(ResNetResidualBlock):
     expansion = 4
     def __init__(self, in_channels, out_channels, activation=nn.ReLU, *args, **kwargs):
@@ -125,14 +112,12 @@ class ResNetBottleNeckBlock(ResNetResidualBlock):
              conv_bn(self.out_channels, self.expanded_channels, self.conv, kernel_size=1),
         )
 
-# %%
 # dummy = torch.ones((1, 32, 10, 10))
 
 # block = ResNetBottleNeckBlock(32, 64)
 # block(dummy).shape
 # print(block)
 
-# %%
 class ResNetLayer(nn.Module):
     def __init__(self, in_channels, out_channels, block=ResNetBasicBlock, n=1, *args, **kwargs):
         super().__init__()
@@ -149,14 +134,12 @@ class ResNetLayer(nn.Module):
         x = self.blocks(x)
         return x
 
-# %%
 # dummy = torch.ones((1, 32, 48, 48))
 
 # layer = ResNetLayer(64, 128, block=ResNetBasicBlock, n=3)
 # # layer(dummy).shape
 # layer
 
-# %%
 class ResNetEncoder(nn.Module):
     """
     ResNet encoder composed by increasing different layers with increasing features.
@@ -191,7 +174,6 @@ class ResNetEncoder(nn.Module):
             x = block(x)
         return x
 
-# %%
 class ResnetDecoder(nn.Module):
     """
     This class represents the tail of ResNet. It performs a global pooling and maps the output to the
@@ -208,7 +190,6 @@ class ResnetDecoder(nn.Module):
         x = self.decoder(x)
         return x
 
-# %%
 class ResNet(nn.Module):
     
     def __init__(self, in_channels, n_classes, *args, **kwargs):
@@ -221,7 +202,6 @@ class ResNet(nn.Module):
         x = self.decoder(x)
         return x
 
-# %%
 def resnet18(in_channels, n_classes, block=ResNetBasicBlock, *args, **kwargs):
     return ResNet(in_channels, n_classes, block=block, deepths=[2, 2, 2, 2], *args, **kwargs)
 
@@ -237,13 +217,11 @@ def resnet101(in_channels, n_classes, block=ResNetBasicBlock, *args, **kwargs):
 def resnet152(in_channels, n_classes, block=ResNetBasicBlock, *args, **kwargs):
     return ResNet(in_channels, n_classes, block=block, deepths=[3, 8, 36, 3], *args, **kwargs)
 
-# %%
 # from torchsummary import summary
 
 # model = resnet18(3, 1000)
 # summary(model.cuda(), (3, 224, 224))
 
-# %%
 class ResNetBlockWithDropout(ResNetResidualBlock):
     expansion=1
     def __init__(self, in_channels, out_channels, *args, **kwargs):
@@ -254,20 +232,15 @@ class ResNetBlockWithDropout(ResNetResidualBlock):
             nn.Dropout2d(0.2),
         )
 
-# %%
 # model = resnet18(3, 1000, block=ResNetBlockWithDropout)
 
 # summary(model.cuda(), (3, 224, 224))
 
-# %%
 # from torchsummary import summary
 
 # model = resnet18(3, 1000, block=ResNetBlockWithDropout, activation='leaky_relu')
 
 # summary(model.cuda(), (3, 224, 224))
-
-
-# %%
 
 def resnet18v2(in_channels, n_classes, block=ResNetResidualBlock, *args, **kwargs):
     return ResNet(in_channels, n_classes, block=block, deepths=[2, 2, 2, 2], *args, **kwargs)
