@@ -1,5 +1,5 @@
 from models.resnet import resnet18, resnet50
-from models.efficientnet import EfficientNetB0
+from models.efficientnetv2 import efficientnet_b0
 from models.examplenet import examplenet
 from models.resnetv2 import resnet18v2
 import torch
@@ -17,12 +17,12 @@ def opt(parser):
     parser.add_argument('--epoch', default = 100, type=int, help='epochs')
     parser.add_argument('--train_path', type=str, required=False, help='train path') # not using
     parser.add_argument('--test_path', type=str, required=False, help='test path to visualize')
-    parser.add_argument('--model', default = 'resnet18', type=str, required=False, help='model. resnet18|resnet50|efficientnet|...')
+    parser.add_argument('--model', default = 'resnet18', type=str, required=False, help='model. resnet18|resnet50|efficientnetb0|...')
     parser.add_argument('--checkpoint', default = './checkpoint/ckpt_best.pth', type=str, required=False, 
                         help='checkpoint for resuming training, testing and converting to onnx')
     parser.add_argument('--data_dir', type=str, required=False, help='data dir must contain train, test folder')
     parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
-    parser.add_argument('--step_size', default=10, type=int, help='decay learning rate step size')
+    parser.add_argument('--step_size', default=20, type=int, help='decay learning rate step size')
     parser.add_argument('--gamma', default=0.1, type=int, help='factor learning rate decay')
     parser.add_argument('--adam', action='store_true', help='use adam, default is SGD')
     parser.add_argument('--beta1', type=float, default=0.9, help='beta1 for adam. default=0.9')
@@ -41,8 +41,8 @@ def model(args):
         net = resnet18(num_classes=args.num_classes)
     if args.model == 'resnet50':
         net = resnet50(num_classes=args.num_classes)
-    if args.model == 'efficientnet':
-        net = EfficientNetB0(num_classes=args.num_classes)
+    if args.model == 'efficientnetb0':
+        net = efficientnet_b0(num_classes=args.num_classes)
     if args.model == 'examplenet':
         net = examplenet(num_classes=args.num_classes)
     if args.model == 'resnet18v2':
