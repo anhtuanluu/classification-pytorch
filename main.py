@@ -171,6 +171,7 @@ def eval():
     test_loss = 0
     correct = 0
     total = 0
+    print('Evaluating from checkpoint {}'.format(args.checkpoint))
     assert os.path.isfile(args.checkpoint), 'Error: no checkpoint directory found!'
     checkpoint = torch.load(args.checkpoint)
     net.load_state_dict(checkpoint['net'])

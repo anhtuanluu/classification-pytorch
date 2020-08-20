@@ -37,7 +37,7 @@ if device == 'cuda':
 
 # load checkpoint
 assert os.path.isfile(args.checkpoint), 'Error: no checkpoint found!'
-print('Resuming from checkpoint {}'.format(args.checkpoint))
+print('Converting from checkpoint {}'.format(args.checkpoint))
 checkpoint = torch.load(args.checkpoint)
 
 # new state
