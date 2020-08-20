@@ -24,6 +24,8 @@ def opt(parser):
     parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
     parser.add_argument('--step_size', default=10, type=int, help='decay learning rate step size')
     parser.add_argument('--gamma', default=0.1, type=int, help='factor learning rate decay')
+    parser.add_argument('--adam', action='store_true', help='use adam, default is SGD')
+    parser.add_argument('--beta1', type=float, default=0.9, help='beta1 for adam. default=0.9')
     parser.add_argument('--eval', action='store_true', help='no training, only evaluating')
     parser.add_argument('--balance', action='store_true', 
                         help='imbalanced dataset sampler. Source: https://github.com/ufoym/imbalanced-dataset-sampler#Usage')
