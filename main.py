@@ -94,7 +94,7 @@ if args.adam:
     optimizer = optim.Adam(net.parameters(), lr=args.lr, betas=(args.beta1, 0.999))
 else:
     optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
-# Decay LR by a factor of 0.1 every step_size epochs
+# Decay LR by a factor of gamma every step_size epochs
 scheduler = lr_scheduler.StepLR(optimizer, step_size=args.step_size, gamma=args.gamma)
 
 # training
