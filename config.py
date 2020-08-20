@@ -1,6 +1,7 @@
 from models.resnet import resnet18, resnet50
 from models.efficientnet import EfficientNetB0
 from models.examplenet import examplenet
+from models.resnetv2 import resnet18v2
 import torch
 from torchsummary import summary
 import torch.backends.cudnn as cudnn
@@ -21,6 +22,8 @@ def opt(parser):
                         help='checkpoint for resuming training, testing and converting to onnx')
     parser.add_argument('--data_dir', type=str, required=False, help='data dir must contain train, test folder')
     parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
+    parser.add_argument('--step_size', default=2, type=int, help='decay learning rate step size')
+    parser.add_argument('--gamma', default=0.1, type=int, help='factor learning rate decay')
     parser.add_argument('--eval', action='store_true', help='no training, only evaluating')
     parser.add_argument('--balance', action='store_true', 
                         help='imbalanced dataset sampler. Source: https://github.com/ufoym/imbalanced-dataset-sampler#Usage')
@@ -40,5 +43,7 @@ def model(args):
         net = EfficientNetB0(num_classes=args.num_classes)
     if args.model == 'examplenet':
         net = examplenet(num_classes=args.num_classes)
+    if args.model == 'resnet18v2':
+        net = resnet18v2(3, n_classes=args.num_classes)
     # add new model here
     return net

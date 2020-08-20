@@ -89,10 +89,11 @@ if not args.balance:
     criterion = nn.CrossEntropyLoss(weight=class_weights)
 else:
     criterion = nn.CrossEntropyLoss()
-
+# Optimizer
 optimizer = optim.SGD(net.parameters(), lr=args.lr,
                       momentum=0.9, weight_decay=5e-4)
-
+# Decay LR by a factor of 0.1 every step_size epochs
+scheduler = lr_scheduler.StepLR(optimizer, step_size=args.step_size, gamma=args.gamma)
 # training
 def train(epoch):
     print('\nEpoch: %d' % epoch)
@@ -207,3 +208,4 @@ if __name__ == '__main__':
         for epoch in range(start_epoch, start_epoch + args.epoch):
             train(epoch)
             test(epoch)
+            scheduler.step()
