@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 
 from functools import partial
-from dataclasses import dataclass
 from collections import OrderedDict
 
 class Conv2dAuto(nn.Conv2d):
@@ -74,7 +73,6 @@ class ResNetResidualBlock(ResidualBlock):
     @property
     def should_apply_shortcut(self):
         return self.in_channels != self.expanded_channels
-
 
 # ResNetResidualBlock(32, 64)
 
@@ -217,6 +215,7 @@ def resnet101(in_channels, n_classes, block=ResNetBasicBlock, *args, **kwargs):
 def resnet152(in_channels, n_classes, block=ResNetBasicBlock, *args, **kwargs):
     return ResNet(in_channels, n_classes, block=block, deepths=[3, 8, 36, 3], *args, **kwargs)
 
+
 # from torchsummary import summary
 
 # model = resnet18(3, 1000)
@@ -231,7 +230,6 @@ class ResNetBlockWithDropout(ResNetResidualBlock):
             activation_func(self.activation),
             nn.Dropout2d(0.2),
         )
-
 # model = resnet18(3, 1000, block=ResNetBlockWithDropout)
 
 # summary(model.cuda(), (3, 224, 224))
@@ -242,5 +240,5 @@ class ResNetBlockWithDropout(ResNetResidualBlock):
 
 # summary(model.cuda(), (3, 224, 224))
 
-def resnet18v2(in_channels, n_classes, block=ResNetResidualBlock, *args, **kwargs):
+def resnet18v2(in_channels, n_classes, block=ResNetBlockWithDropout, *args, **kwargs):
     return ResNet(in_channels, n_classes, block=block, deepths=[2, 2, 2, 2], *args, **kwargs)
