@@ -12,11 +12,14 @@ from sklearn import metrics
 from torchsummary import summary
 from dataset.imbalanced import ImbalancedDatasetSampler
 import argparse
+from torch.utils.tensorboard import SummaryWriter
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # config
 parser = argparse.ArgumentParser(description='Image classification')
 args = opt(parser)
+# writer
+writer = SummaryWriter('checkpoint/tensorboard')
 
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
@@ -36,7 +39,6 @@ data_transforms = {
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
 }
-
 # prepare data
 data_dir = args.data_dir # must include train, test folder
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
@@ -72,6 +74,7 @@ net = net.to(device)
 # net parameters
 # count_parameters(net)
 summary(net, (3, args.img_size, args.img_size))
+
 if device == 'cuda':
     net = torch.nn.DataParallel(net)
     cudnn.benchmark = True
@@ -104,6 +107,7 @@ def train(epoch):
     train_loss = 0
     correct = 0
     total = 0
+    acc = 0
     for batch_idx, (inputs, targets) in enumerate(trainloader):
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
@@ -116,10 +120,14 @@ def train(epoch):
         _, predicted = outputs.max(1)
         total += targets.size(0)
         correct += predicted.eq(targets).sum().item()
-
+        acc = 100.*correct/total
+        
         progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-                     % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
-    
+                     % (train_loss/(batch_idx+1), acc, correct, total))
+    # write acc & loss
+    writer.add_scalar('loss/training', train_loss/(len(trainloader)), epoch * len(trainloader))
+    writer.add_scalar('acc/training', acc / 100, epoch * len(trainloader))
+
     # Save checkpoint.
     if epoch != 0 and epoch % args.save_checkpoint == 0:
         print('Saving checkpoint every {} epoch..'.format(args.save_checkpoint))
@@ -139,6 +147,7 @@ def test(epoch):
     test_loss = 0
     correct = 0
     total = 0
+    acc = 0
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
@@ -149,9 +158,13 @@ def test(epoch):
             _, predicted = outputs.max(1)
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
+            acc = 100.*correct/total
 
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
+    # write acc & loss
+    writer.add_scalar('loss/testing', test_loss/(len(trainloader)), epoch * len(trainloader))
+    writer.add_scalar('acc/testing', acc / 100, epoch * len(trainloader))
 
     # Save checkpoint.
     acc = 100.*correct/total
@@ -175,6 +188,7 @@ def eval():
     test_loss = 0
     correct = 0
     total = 0
+    acc = 0
     print('Evaluating from checkpoint {}'.format(args.checkpoint))
     assert os.path.isfile(args.checkpoint), 'Error: no checkpoint directory found!'
     checkpoint = torch.load(args.checkpoint)
@@ -193,8 +207,9 @@ def eval():
             correct += predicted.eq(targets).sum().item()
             target_total = target_total + targets.tolist()
             predicted_total = predicted_total + predicted.tolist()
+            acc = 100.*correct/total
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-                         % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
+                         % (test_loss/(batch_idx+1), acc, correct, total))
 
     confusion_matrix = metrics.confusion_matrix(target_total, predicted_total)
     print("confusion matrix: \n{}".format(confusion_matrix))
@@ -212,3 +227,5 @@ if __name__ == '__main__':
             train(epoch)
             test(epoch)
             scheduler.step()
+            writer.flush()
+        writer.close()
