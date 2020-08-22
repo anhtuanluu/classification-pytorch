@@ -8,3 +8,4 @@ matplotlib
 opencv-python
 pillow
 onnxruntime
+tb-nightly
