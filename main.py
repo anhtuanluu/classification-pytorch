@@ -163,7 +163,7 @@ def test(epoch):
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
     # write acc & loss
-    writer.add_scalar('loss/testing', test_loss/(len(trainloader)), epoch * len(trainloader))
+    writer.add_scalar('loss/testing', test_loss/(len(testloader)), epoch * len(trainloader))
     writer.add_scalar('acc/testing', acc / 100, epoch * len(trainloader))
 
     # Save checkpoint.
