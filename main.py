@@ -45,12 +45,12 @@ image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'test']}
 if not args.balance:
-    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=args.batch_size,
+    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=args.batch_size, pin_memory=True,
                                                 shuffle=True, num_workers=args.num_workers)
                 for x in ['train', 'test']}
 else:
     print("Use imbalanced dataset sampler...")
-    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], sampler=ImbalancedDatasetSampler(image_datasets[x]),
+    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], sampler=ImbalancedDatasetSampler(image_datasets[x]), pin_memory=True,
                                                 batch_size=args.batch_size, num_workers=args.num_workers)
                 for x in ['train', 'test']}
 
